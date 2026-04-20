@@ -1,22 +1,28 @@
 [project]
 name = "formalcc-hermes-plugin"
-version = "0.1.0"
-description = "FormalCC integration for Hermes Agent"
+version = "0.3.0"
+description = "FormalCC integration for Hermes Agent - Memory and Context Management"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
     {name = "FormalAI", email = "contact@formalai.com"}
 ]
-keywords = ["hermes", "formalcc", "context", "memory", "agent"]
+maintainers = [
+    {name = "FormalAI", email = "contact@formalai.com"}
+]
+keywords = ["hermes", "formalcc", "context", "memory", "agent", "llm", "ai"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 
 dependencies = [
@@ -32,7 +38,16 @@ dev = [
     "pytest-cov>=4.0.0",
     "black>=23.0.0",
     "ruff>=0.1.0",
+    "build>=1.0.0",
+    "twine>=4.0.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/FormSyAI/context-compiler-hermes-plugin"
+Documentation = "https://github.com/FormSyAI/context-compiler-hermes-plugin/blob/main/README.md"
+Repository = "https://github.com/FormSyAI/context-compiler-hermes-plugin"
+Issues = "https://github.com/FormSyAI/context-compiler-hermes-plugin/issues"
+Changelog = "https://github.com/FormSyAI/context-compiler-hermes-plugin/blob/main/CHANGELOG.md"
 
 [project.entry-points."hermes.plugins.memory"]
 formalcc-memory = "plugins.memory.formalcc_memory:FormalCCMemoryProvider"
