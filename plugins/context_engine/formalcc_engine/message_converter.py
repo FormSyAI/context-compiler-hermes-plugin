@@ -58,9 +58,9 @@ def extract_task(messages: list[dict]) -> dict:
     if any(word in instruction_lower for word in ["fix", "bug", "error", "patch"]):
         task_type = "bugfix"
     elif any(word in instruction_lower for word in ["add", "implement", "create", "build"]):
-        task_type = "feature"
+        task_type = "patch_generation"
     elif any(word in instruction_lower for word in ["refactor", "clean", "improve"]):
-        task_type = "refactor"
+        task_type = "patch_generation"
 
     return {
         "instruction": instruction[:500],  # Truncate for safety

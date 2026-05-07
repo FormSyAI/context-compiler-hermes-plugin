@@ -44,9 +44,11 @@ Sync turn data to memory (non-blocking).
 |---------------|------|-------------|
 | `session_id` | `str` | Current session ID |
 | `turn_id` | `str` | Turn identifier |
-| `user_message` | `str` | User message content |
-| `assistant_message` | `str` | Assistant response content |
-| `metadata` | `dict` | Optional metadata |
+| `messages` | `list[dict]` | OpenAI-style turn messages to ingest |
+| `identity` | `dict` | Optional user/profile identity |
+| `sync_mode` | `str` | Optional sync mode: `async_best_effort` or `sync_required` |
+
+For compatibility, `user_message` and `assistant_message` are still accepted and converted into `messages`.
 
 ---
 
@@ -56,7 +58,8 @@ Finalize session and flush memory.
 | Session Data Key | Type | Description |
 |------------------|------|-------------|
 | `session_id` | `str` | Session to finalize |
-| `metadata` | `dict` | Optional metadata |
+| `identity` | `dict` | Optional user/profile identity |
+| `summary_hint` | `str` | Optional hint for final session summarization |
 
 ---
 
@@ -74,7 +77,7 @@ Handle memory tool invocations from the model.
 
 | Tool | Arguments | Returns |
 |------|-----------|---------|
-| `cc_memory_search` | `query: str`, `limit: int` | `{"result": {...}}` |
+| `cc_memory_search` | `query: str`, `top_k: int` | `{"result": {...}}` |
 | `cc_memory_profile` | _(none)_ | `{"workspace_id": ..., "session_id": ..., "turn_count": ...}` |
 
 ---
@@ -150,6 +153,13 @@ async with RuntimeClient(
 ) as client:
     response = await client.memory_prefetch(request)
 ```
+
+Runtime API responses follow the refined v0.3 contract:
+
+- `compile(request)` accepts a `CompileRequest` and returns a `CompileResponse` wrapper for plugin compatibility. The server response itself is a direct `CompileBundle`.
+- `memory_prefetch(request)` returns a memory block plus metrics and retrieved facts when provided by the server.
+- `memory_sync_turn(request)` sends `messages`, `identity`, and `sync_mode` and expects `202 Accepted`.
+- `memory_search(...)` sends `top_k` to `/v1/runtime/memory/search`.
 
 #### Methods
 

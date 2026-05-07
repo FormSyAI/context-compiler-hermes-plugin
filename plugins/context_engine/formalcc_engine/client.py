@@ -4,7 +4,7 @@ import logging
 from typing import Optional, Any
 
 from shared import RuntimeClient
-from shared.models import CompileRequest, CompileBundle
+from shared.models import CompileRequest, CompileBundle, Task
 from shared.errors import RuntimeAPIError, TimeoutError as FormalCCTimeoutError
 
 logger = logging.getLogger("formalcc.engine.client")
@@ -34,14 +34,14 @@ class EngineClient:
                 session_id=session_id,
                 turn_id=turn_id,
                 identity=identity,
-                task=task,
+                task=Task(**task) if isinstance(task, dict) else task,
                 hints=hints,
             )
 
             response = await self.runtime_client.compile(request)
             logger.info(
                 f"Compile completed: scene={response.bundle.scene}, "
-                f"elapsed={response.bundle.metrics.get('elapsed_ms', 'N/A')}ms"
+                f"elapsed={response.bundle.metrics.elapsed_ms}ms"
             )
             return response.bundle
 

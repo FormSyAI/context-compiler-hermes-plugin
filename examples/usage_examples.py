@@ -85,12 +85,17 @@ async def example_coding_task():
     await memory.sync_turn({
         "session_id": session_id,
         "turn_id": "turn_001",
-        "user_message": "Fix the email validator bug",
-        "assistant_message": "I'll fix the validator...",
+        "messages": [
+            {"role": "user", "content": "Fix the email validator bug"},
+            {"role": "assistant", "content": "I'll fix the validator..."},
+        ],
     })
 
     # Step 6: End session
-    await memory.session_end({"session_id": session_id})
+    await memory.session_end({
+        "session_id": session_id,
+        "summary_hint": "Coding task about email validator fixes",
+    })
 
 
 # ============================================================
@@ -115,7 +120,7 @@ async def example_memory_search():
     # Handle tool call from model
     result = await memory.handle_tool_call(
         "cc_memory_search",
-        {"query": "authentication patterns", "limit": 5}
+        {"query": "authentication patterns", "top_k": 5}
     )
     print(f"Search results: {result}")
 

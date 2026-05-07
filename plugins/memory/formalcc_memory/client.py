@@ -9,6 +9,7 @@ from shared.models import (
     MemoryPrefetchResponse,
     MemorySyncTurnRequest,
     SessionEndRequest,
+    SyncMode,
 )
 from shared.errors import RuntimeAPIError, TimeoutError as FormalCCTimeoutError
 
@@ -36,8 +37,7 @@ class MemoryClient:
                 session_id=session_id,
                 turn_id=turn_id,
                 query=query,
-                limit=10,
-                hints=hints,
+                budget={"top_k": 10},
             )
 
             response = await self.runtime_client.memory_prefetch(request)
@@ -56,9 +56,9 @@ class MemoryClient:
         workspace_id: str,
         session_id: str,
         turn_id: str,
-        user_message: str,
-        assistant_message: str,
-        metadata: Optional[dict[str, Any]] = None,
+        messages: list[dict[str, Any]],
+        identity: Optional[dict[str, Any]] = None,
+        sync_mode: SyncMode = SyncMode.ASYNC_BEST_EFFORT,
     ) -> None:
         """Sync turn data (non-blocking)."""
         try:
@@ -66,9 +66,9 @@ class MemoryClient:
                 workspace_id=workspace_id,
                 session_id=session_id,
                 turn_id=turn_id,
-                user_message=user_message,
-                assistant_message=assistant_message,
-                metadata=metadata,
+                messages=messages,
+                identity=identity,
+                sync_mode=sync_mode,
             )
 
             await self.runtime_client.memory_sync_turn(request)

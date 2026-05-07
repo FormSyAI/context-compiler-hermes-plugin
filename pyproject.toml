@@ -1,17 +1,17 @@
 [project]
-name = "formalcc-hermes-plugin"
+name = "context-compiler-hermes-plugin"
 version = "0.3.0"
-description = "FormalCC integration for Hermes Agent - Memory and Context Management"
+description = "context-compiler integration for Hermes Agent - Memory and Context Management"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "FormalAI", email = "contact@formalai.com"}
+    {name = "FormSyAI", email = "liuwanggen@gmail.com"}
 ]
 maintainers = [
-    {name = "FormalAI", email = "contact@formalai.com"}
+    {name = "FormSyAI", email = "liuwanggen@gmail.com"}
 ]
-keywords = ["hermes", "formalcc", "context", "memory", "agent", "llm", "ai"]
+keywords = ["hermes", "ContextOS", "context", "memory", "agent", "llm", "ai coding", "vision understanding"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",

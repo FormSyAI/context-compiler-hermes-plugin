@@ -102,7 +102,7 @@ When `enable_memory_tools: true`, the model can use:
 
 ```python
 # Search memory
-cc_memory_search(query="authentication flow", limit=10)
+cc_memory_search(query="authentication flow", top_k=10)
 
 # Get memory profile
 cc_memory_profile()

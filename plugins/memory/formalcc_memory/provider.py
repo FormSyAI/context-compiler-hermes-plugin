@@ -6,6 +6,7 @@ from typing import Optional, Any
 from abc import ABC, abstractmethod
 
 from shared import RuntimeClient
+from shared.models import SyncMode
 from .config import ConfigManager, MemoryConfig
 from .client import MemoryClient
 
@@ -138,17 +139,29 @@ class FormalCCMemoryProvider(MemoryProvider):
         if not self._memory_client:
             logger.warning("Memory client not initialized")
             return
-        
+
         session_id = turn_data.get("session_id", self._session_id)
         turn_id = turn_data.get("turn_id", f"{session_id}_turn_{self._turn_counter:04d}")
-        
+        messages = turn_data.get("messages")
+        if messages is None:
+            messages = [
+                {
+                    "role": "user",
+                    "content": turn_data.get("user_message", ""),
+                },
+                {
+                    "role": "assistant",
+                    "content": turn_data.get("assistant_message", ""),
+                },
+            ]
+
         await self._memory_client.sync_turn(
             workspace_id=self._config.workspace_id,
             session_id=session_id,
             turn_id=turn_id,
-            user_message=turn_data.get("user_message", ""),
-            assistant_message=turn_data.get("assistant_message", ""),
-            metadata=turn_data.get("metadata"),
+            messages=messages,
+            identity=turn_data.get("identity"),
+            sync_mode=SyncMode(turn_data.get("sync_mode", SyncMode.ASYNC_BEST_EFFORT)),
         )
     
     async def session_end(self, session_data: dict) -> None:
@@ -162,7 +175,8 @@ class FormalCCMemoryProvider(MemoryProvider):
             request = SessionEndRequest(
                 workspace_id=self._config.workspace_id,
                 session_id=session_data.get("session_id", self._session_id),
-                metadata=session_data.get("metadata"),
+                identity=session_data.get("identity"),
+                summary_hint=session_data.get("summary_hint"),
             )
             
             await self._runtime_client.session_end(request)
@@ -191,10 +205,10 @@ class FormalCCMemoryProvider(MemoryProvider):
                             "type": "string",
                             "description": "Search query"
                         },
-                        "limit": {
+                        "top_k": {
                             "type": "integer",
                             "description": "Maximum results",
-                            "default": 10
+                            "default": 5
                         }
                     },
                     "required": ["query"]
@@ -218,13 +232,13 @@ class FormalCCMemoryProvider(MemoryProvider):
         try:
             if tool_name == "cc_memory_search":
                 query = arguments.get("query", "")
-                limit = arguments.get("limit", 10)
+                top_k = arguments.get("top_k", arguments.get("limit", 5))
                 
                 result = await self._runtime_client.memory_search(
                     workspace_id=self._config.workspace_id,
                     session_id=self._session_id or "unknown",
                     query=query,
-                    limit=limit,
+                    top_k=top_k,
                 )
                 
                 return {"result": result}

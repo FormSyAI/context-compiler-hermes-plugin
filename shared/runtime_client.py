@@ -116,7 +116,7 @@ class RuntimeClient:
         response_data = await self._request(
             "POST",
             "/v1/runtime/memory_prefetch",
-            data=request.model_dump(),
+            data=request.model_dump(mode="json"),
             session_id=request.session_id,
         )
         
@@ -129,7 +129,7 @@ class RuntimeClient:
         await self._request(
             "POST",
             "/v1/runtime/memory_sync_turn",
-            data=request.model_dump(),
+            data=request.model_dump(mode="json"),
             session_id=request.session_id,
         )
     
@@ -140,7 +140,7 @@ class RuntimeClient:
         await self._request(
             "POST",
             "/v1/runtime/session_end",
-            data=request.model_dump(),
+            data=request.model_dump(mode="json"),
             session_id=request.session_id,
         )
     
@@ -151,17 +151,19 @@ class RuntimeClient:
         response_data = await self._request(
             "POST",
             "/v1/runtime/compile",
-            data=request.model_dump(),
+            data=request.model_dump(mode="json"),
             session_id=request.session_id,
         )
-        
-        return CompileResponse(**response_data)
+        if "bundle" in response_data:
+            return CompileResponse(bundle=response_data["bundle"])
+        return CompileResponse(bundle=response_data)
     
     async def memory_search(
-        self, workspace_id: str, session_id: str, query: str, limit: int = 10
+        self, workspace_id: str, session_id: str, query: str, top_k: int = 5, limit: Optional[int] = None
     ) -> dict[str, Any]:
         """Call memory search endpoint (for tool calls)."""
         logger.debug(f"Memory search: query={query[:50]}...")
+        effective_top_k = limit if limit is not None else top_k
         
         return await self._request(
             "POST",
@@ -170,7 +172,7 @@ class RuntimeClient:
                 "workspace_id": workspace_id,
                 "session_id": session_id,
                 "query": query,
-                "limit": limit,
+                "top_k": effective_top_k,
             },
             session_id=session_id,
         )

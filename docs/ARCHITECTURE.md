@@ -116,7 +116,7 @@ Model responds
 │  .sync_turn()   │  ← non-blocking (fire-and-forget)
 └────────┬────────┘
          │  POST /v1/runtime/memory_sync_turn
-         │  { user_message, assistant_message, turn_id }
+         │  { messages, identity, sync_mode, turn_id }
          ▼
 ┌─────────────────┐
 │  FormalCC API   │

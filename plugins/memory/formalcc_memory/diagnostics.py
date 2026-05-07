@@ -94,7 +94,7 @@ class DiagnosticRunner:
                     session_id="test_session",
                     turn_id="test_turn_001",
                     query="test authentication patterns",
-                    limit=5,
+                    budget={"top_k": 5},
                 )
 
                 response = await client.memory_prefetch(request)
