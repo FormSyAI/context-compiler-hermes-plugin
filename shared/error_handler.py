@@ -1,6 +1,6 @@
 """Enhanced error handling with better error messages and recovery."""
 
-from typing import Optional, Type
+from typing import Optional
 from shared.errors import RuntimeAPIError, TimeoutError as FormalCCTimeoutError
 
 

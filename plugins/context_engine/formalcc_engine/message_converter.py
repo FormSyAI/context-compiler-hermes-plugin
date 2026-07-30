@@ -1,6 +1,5 @@
 """Message conversion utilities for formalcc-engine."""
 
-from typing import Optional
 from shared.models import CompileBundle
 
 

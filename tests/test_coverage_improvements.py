@@ -1,9 +1,7 @@
 """Additional tests to improve code coverage for low-coverage modules."""
 
 import pytest
-import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
-from pathlib import Path
+from unittest.mock import AsyncMock, patch
 
 from shared.error_handler import ErrorHandler, ErrorRecovery
 from shared.errors import RuntimeAPIError, TimeoutError as FormalCCTimeoutError
@@ -356,12 +354,25 @@ async def test_runtime_client_memory_sync_turn():
                 workspace_id="ws_test",
                 session_id="sess_123",
                 turn_id="turn_001",
-                user_message="Hello",
-                assistant_message="Hi there",
+                messages=[
+                    {"role": "user", "content": "Hello"},
+                    {"role": "assistant", "content": "Hi there"},
+                ],
             )
 
             await client.memory_sync_turn(request)
             client._client.request.assert_called_once()
+            assert client._client.request.await_args.kwargs["json"] == {
+                "workspace_id": "ws_test",
+                "session_id": "sess_123",
+                "turn_id": "turn_001",
+                "identity": None,
+                "messages": [
+                    {"role": "user", "content": "Hello"},
+                    {"role": "assistant", "content": "Hi there"},
+                ],
+                "sync_mode": "async_best_effort",
+            }
 
 
 @pytest.mark.asyncio
@@ -421,6 +432,7 @@ async def test_runtime_client_403_error():
             mock_response = AsyncMock()
             mock_response.status_code = 403
             mock_response.content = b"Forbidden"
+            mock_response.json = lambda: {"detail": "Forbidden"}
             mock_response.raise_for_status = lambda: None
             client._client.request = AsyncMock(return_value=mock_response)
 
@@ -453,11 +465,18 @@ async def test_memory_client_sync_turn_success():
         workspace_id="ws_test",
         session_id="sess_123",
         turn_id="turn_001",
-        user_message="Hello",
-        assistant_message="Hi",
+        messages=[
+            {"role": "user", "content": "Hello"},
+            {"role": "assistant", "content": "Hi"},
+        ],
     )
 
     mock_runtime.memory_sync_turn.assert_called_once()
+    request = mock_runtime.memory_sync_turn.await_args.args[0]
+    assert request.messages == [
+        {"role": "user", "content": "Hello"},
+        {"role": "assistant", "content": "Hi"},
+    ]
 
 
 @pytest.mark.asyncio
@@ -474,8 +493,10 @@ async def test_memory_client_sync_turn_failure():
         workspace_id="ws_test",
         session_id="sess_123",
         turn_id="turn_001",
-        user_message="Hello",
-        assistant_message="Hi",
+        messages=[
+            {"role": "user", "content": "Hello"},
+            {"role": "assistant", "content": "Hi"},
+        ],
     )
 
 
@@ -506,8 +527,8 @@ async def test_memory_client_prefetch_success():
 
 
 @pytest.mark.asyncio
-async def test_memory_client_prefetch_with_hints():
-    """Test MemoryClient.prefetch with hints."""
+async def test_memory_client_prefetch_uses_v03_budget_contract():
+    """Test MemoryClient.prefetch uses the v0.3 request contract."""
     from plugins.memory.formalcc_memory.client import MemoryClient
     from shared.models import MemoryPrefetchResponse
 
@@ -526,9 +547,14 @@ async def test_memory_client_prefetch_with_hints():
         session_id="sess_123",
         turn_id="turn_001",
         query="fix bug",
-        hints={"scene": "coding", "repo_id": "org/repo"},
     )
 
     assert result == "Coding context"
-    call_args = mock_runtime.memory_prefetch.call_args
-    assert call_args[0][0].hints == {"scene": "coding", "repo_id": "org/repo"}
+    request = mock_runtime.memory_prefetch.await_args.args[0]
+    assert request.model_dump(exclude_none=True) == {
+        "workspace_id": "ws_test",
+        "session_id": "sess_123",
+        "turn_id": "turn_001",
+        "query": "fix bug",
+        "budget": {"top_k": 10},
+    }

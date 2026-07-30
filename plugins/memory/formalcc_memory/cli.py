@@ -4,7 +4,6 @@ import asyncio
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
 
 from .config import ConfigManager
 from .diagnostics import doctor_command, status_command as status_cmd_enhanced

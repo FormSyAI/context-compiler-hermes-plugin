@@ -4,12 +4,11 @@ These tests simulate real Hermes agent scenarios with the FormalCC plugins.
 """
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
-from pathlib import Path
+from unittest.mock import AsyncMock, patch
 
 from plugins.memory.formalcc_memory.provider import FormalCCMemoryProvider
 from plugins.context_engine.formalcc_engine.engine import FormalCCContextEngine
-from shared.models import MemoryPrefetchResponse, CompileBundle, CompiledMessage
+from shared.models import CompileBundle, CompiledMessage, Metrics
 
 
 @pytest.mark.asyncio
@@ -139,7 +138,7 @@ async def test_focus_topic_support(mock_hermes_home, mock_config, sample_compile
         context = {"session_id": "test_session"}
         focus_topic = "validators.py regex"
 
-        result = await engine.compress(messages, context, focus_topic=focus_topic)
+        await engine.compress(messages, context, focus_topic=focus_topic)
 
         # Verify focus_topic was passed in hints
         call_args = engine._engine_client.compile.call_args
@@ -253,7 +252,8 @@ async def test_advisory_injection(mock_hermes_home, mock_config):
             advisory=Advisory(
                 recommended_action="patch",
                 rationale_tail="Prefer minimal changes to regex"
-            )
+            ),
+            metrics=Metrics(elapsed_ms=0),
         )
 
         engine._engine_client.compile = AsyncMock(return_value=bundle)

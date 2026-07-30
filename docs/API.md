@@ -33,7 +33,6 @@ Prefetch memory before model call. Returns memory block string or `None`.
 |-------------|------|-------------|
 | `session_id` | `str` | Current session ID |
 | `query` | `str` | User query for memory retrieval |
-| `hints` | `dict` | Optional hints (scene, repo_id) |
 
 ---
 

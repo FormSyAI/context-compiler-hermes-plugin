@@ -2,15 +2,14 @@
 
 import pytest
 from unittest.mock import AsyncMock, patch
-from pathlib import Path
 
 from plugins.memory.formalcc_memory.provider import FormalCCMemoryProvider
 from plugins.context_engine.formalcc_engine.engine import FormalCCContextEngine
 from shared.models import (
-    MemoryPrefetchResponse,
     CompileBundle,
     CompiledMessage,
     Advisory,
+    Metrics,
 )
 
 
@@ -40,9 +39,10 @@ async def test_e2e_coding_task_with_memory(mock_hermes_home, mock_config):
                 )
             ],
             advisory=Advisory(
-                recommended_action="test_first",
+                recommended_action="patch",
                 rationale_tail="Write tests before implementation"
             ),
+            metrics=Metrics(elapsed_ms=0),
         )
         context_engine._engine_client.compile = AsyncMock(return_value=bundle)
 
@@ -118,6 +118,7 @@ async def test_e2e_vision_task(mock_hermes_home, mock_config):
                     content="Analyze financial data in the document"
                 )
             ],
+            metrics=Metrics(elapsed_ms=0),
         )
         context_engine._engine_client.compile = AsyncMock(return_value=bundle)
 
@@ -275,7 +276,8 @@ async def test_e2e_concurrent_operations(mock_hermes_home, mock_config):
                 scene="coding",
                 compiled_messages=[
                     CompiledMessage(role="system", content="compiled")
-                ]
+                ],
+                metrics=Metrics(elapsed_ms=0),
             )
         )
 

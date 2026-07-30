@@ -242,11 +242,13 @@ X-Session-ID: <hermes_session_id>
   "workspace_id": "ws_abc123",
   "session_id": "sess_xyz789",
   "turn_id": "turn_001",
-  "query": "Fix regex bug in validators.py",
-  "limit": 10,
-  "hints": {
-    "scene": "coding",
+  "identity": {
     "repo_id": "org/repo"
+  },
+  "query": "Fix regex bug in validators.py",
+  "conversation_window": [],
+  "budget": {
+    "top_k": 10
   }
 }
 ```
@@ -722,4 +724,3 @@ Expose via CLI:
 3. Begin Phase 1 implementation
 4. Set up CI/CD pipeline
 5. Write integration tests
-

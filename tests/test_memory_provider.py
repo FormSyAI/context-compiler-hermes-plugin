@@ -1,8 +1,7 @@
 """Tests for FormalCC Memory Provider."""
 
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
-from pathlib import Path
+from unittest.mock import AsyncMock, patch
 
 from plugins.memory.formalcc_memory.provider import FormalCCMemoryProvider
 from plugins.memory.formalcc_memory.config import MemoryConfig

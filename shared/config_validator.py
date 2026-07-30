@@ -4,7 +4,7 @@ import os
 import json
 from pathlib import Path
 from typing import Optional, Any, Dict
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, field
 import logging
 
 logger = logging.getLogger("formalcc.config.validator")

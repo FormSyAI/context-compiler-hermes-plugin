@@ -4,7 +4,7 @@ import pytest
 from unittest.mock import AsyncMock, patch
 
 from plugins.context_engine.formalcc_engine.engine import FormalCCContextEngine
-from shared.models import CompileBundle, CompiledMessage, Advisory
+from shared.models import CompileBundle
 
 
 @pytest.mark.asyncio
