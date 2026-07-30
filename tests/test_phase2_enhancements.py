@@ -1,7 +1,6 @@
 """Tests for Phase 2 enhancements."""
 
 import pytest
-from pathlib import Path
 from shared.config_validator import ConfigValidator, ConfigGenerator
 from shared.resilience import CircuitBreaker, CircuitState, RetryStrategy
 from shared.error_handler import ErrorHandler, ErrorRecovery

@@ -6,9 +6,7 @@ from typing import Optional, Any
 from shared import RuntimeClient
 from shared.models import (
     MemoryPrefetchRequest,
-    MemoryPrefetchResponse,
     MemorySyncTurnRequest,
-    SessionEndRequest,
     SyncMode,
 )
 from shared.errors import RuntimeAPIError, TimeoutError as FormalCCTimeoutError
@@ -28,7 +26,6 @@ class MemoryClient:
         session_id: str,
         turn_id: str,
         query: str,
-        hints: Optional[dict[str, Any]] = None,
     ) -> str:
         """Prefetch memory and return memory block."""
         try:

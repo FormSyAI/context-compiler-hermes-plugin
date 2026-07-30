@@ -2,7 +2,7 @@
 
 import logging
 from pathlib import Path
-from typing import Optional, Any
+from typing import Optional
 from abc import ABC, abstractmethod
 
 from shared import RuntimeClient
@@ -122,14 +122,12 @@ class FormalCCMemoryProvider(MemoryProvider):
         turn_id = f"{session_id}_turn_{self._turn_counter:04d}"
         
         query = context.get("query", context.get("user_message", ""))
-        hints = context.get("hints", {})
         
         memory_block = await self._memory_client.prefetch(
             workspace_id=self._config.workspace_id,
             session_id=session_id,
             turn_id=turn_id,
             query=query,
-            hints=hints,
         )
         
         return memory_block if memory_block else None

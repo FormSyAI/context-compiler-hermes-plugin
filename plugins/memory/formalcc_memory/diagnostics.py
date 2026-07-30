@@ -1,6 +1,5 @@
 """Advanced diagnostic CLI commands for formalcc-memory provider."""
 
-import asyncio
 import logging
 import time
 from pathlib import Path
@@ -10,7 +9,6 @@ from datetime import datetime
 from .config import ConfigManager
 from shared import RuntimeClient
 from shared.config_validator import ConfigValidator
-from shared.resilience import CircuitBreaker
 
 logger = logging.getLogger("formalcc.memory.diagnostics")
 
@@ -125,7 +123,7 @@ def format_status_output(config, diagnostics: Optional[dict] = None) -> str:
     lines.append("=" * 50)
     lines.append("FormalCC Memory Provider Status")
     lines.append("=" * 50)
-    lines.append(f"Provider: formalcc-memory")
+    lines.append("Provider: formalcc-memory")
     lines.append(f"Status: {'✓ Available' if config else '✗ Not configured'}")
     lines.append("")
 
@@ -162,7 +160,7 @@ def format_status_output(config, diagnostics: Optional[dict] = None) -> str:
             latency = connectivity.get("latency_ms", "N/A")
             lines.append(f"  Connectivity: ✓ OK ({latency}ms)")
         else:
-            lines.append(f"  Connectivity: ✗ Failed")
+            lines.append("  Connectivity: ✗ Failed")
             if connectivity.get("error"):
                 lines.append(f"    Error: {connectivity['error']}")
 
@@ -173,7 +171,7 @@ def format_status_output(config, diagnostics: Optional[dict] = None) -> str:
             latency = prefetch.get("latency_ms", "N/A")
             lines.append(f"  Memory Prefetch: ✓ OK ({count} items, {latency}ms)")
         else:
-            lines.append(f"  Memory Prefetch: ✗ Failed")
+            lines.append("  Memory Prefetch: ✗ Failed")
             if prefetch.get("error"):
                 lines.append(f"    Error: {prefetch['error']}")
 

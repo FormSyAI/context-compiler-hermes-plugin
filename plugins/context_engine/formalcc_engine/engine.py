@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Optional
 
 from shared import RuntimeClient
-from shared.errors import RuntimeAPIError
 from .config import EngineConfigManager, EngineConfig
 from .client import EngineClient
 from .message_converter import (
